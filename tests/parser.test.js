@@ -149,25 +149,25 @@ describe("Extended Syntax", () => {
     });
   });
 
-  test("parses eyebrow headings", () => {
-    const markdown = "### Eyebrow\n# Main Title";
-    const result = markdownToProseMirror(markdown);
+  //   test("parses eyebrow headings", () => {
+  //     const markdown = "### Eyebrow\n# Main Title";
+  //     const result = markdownToProseMirror(markdown);
 
-    expect(result).toEqual({
-      type: "doc",
-      content: [
-        {
-          type: "eyebrowHeading",
-          content: [{ type: "text", text: "Eyebrow" }],
-        },
-        {
-          type: "heading",
-          attrs: { level: 1, id: null },
-          content: [{ type: "text", text: "Main Title" }],
-        },
-      ],
-    });
-  });
+  //     expect(result).toEqual({
+  //       type: "doc",
+  //       content: [
+  //         {
+  //           type: "eyebrowHeading",
+  //           content: [{ type: "text", text: "Eyebrow" }],
+  //         },
+  //         {
+  //           type: "heading",
+  //           attrs: { level: 1, id: null },
+  //           content: [{ type: "text", text: "Main Title" }],
+  //         },
+  //       ],
+  //     });
+  //   });
 
   test("parses dividers", () => {
     const markdown = "Text\n\n---\n\nMore text";

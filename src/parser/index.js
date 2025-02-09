@@ -23,11 +23,11 @@ function parseMarkdownContent(tokens, schema) {
     }
 
     // Handle eyebrow pattern
-    if (isEyebrowPattern(tokens, i)) {
-      content.push(...parseEyebrowPattern(tokens, i, schema));
-      skipNext = true;
-      continue;
-    }
+    // if (isEyebrowPattern(tokens, i)) {
+    //   content.push(...parseEyebrowPattern(tokens, i, schema));
+    //   skipNext = true;
+    //   continue;
+    // }
 
     const node = parseBlock(tokens[i], schema);
     if (node) {

@@ -30,14 +30,6 @@ A JavaScript library for converting Markdown content into ProseMirror-compatible
   [Button Text](button:https://example.com)
   ```
 
-- **Enhanced Headings**: Support for eyebrow headings using a specific pattern:
-
-  ```markdown
-  ### EYEBROW TEXT
-
-  # Main Heading
-  ```
-
 - **Tables with Alignment**: Full support for aligned columns:
   ```markdown
   | Left | Center | Right |
