@@ -47,6 +47,25 @@ const baseNodes = {
     },
     group: "block",
   },
+
+  // List nodes
+  bulletList: {
+    content: "listItem+",
+    group: "block",
+  },
+
+  orderedList: {
+    attrs: {
+      start: { default: 1 },
+    },
+    content: "listItem+",
+    group: "block",
+  },
+
+  listItem: {
+    content: "paragraph block*",
+    defining: true,
+  },
 };
 
 const baseMarks = {

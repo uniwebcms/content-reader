@@ -3,7 +3,9 @@
  * Exports the main function to convert markdown to ProseMirror structure.
  */
 
-const { parseMarkdown } = require("./parser");
+const { marked } = require("marked");
+const { parseMarkdownContent } = require("./parser");
+const { getBaseSchema } = require("./schema");
 
 /**
  * Convert markdown content to ProseMirror document structure
@@ -11,7 +13,9 @@ const { parseMarkdown } = require("./parser");
  * @returns {Object} ProseMirror document structure
  */
 function markdownToProseMirror(markdown) {
-  return parseMarkdown(markdown);
+  const schema = getBaseSchema();
+  const tokens = marked.lexer(markdown);
+  return parseMarkdownContent(tokens, schema);
 }
 
 module.exports = {

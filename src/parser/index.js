@@ -1,29 +1,52 @@
 /**
- * @fileoverview Orchestrates the markdown parsing process to ProseMirror structure
+ * @fileoverview Main parser orchestration
  */
 
-const { marked } = require("marked");
-const { parseMarkdownContent } = require("./markdown");
-const { getBaseSchema } = require("../schema");
+const { parseBlock } = require("./block");
+const { isEyebrowPattern, parseEyebrowPattern } = require("./patterns");
+const { isEmptyContent } = require("./utils");
 
 /**
  * Parse markdown content into ProseMirror document structure
- * @param {string} markdown - Raw markdown content
- * @returns {Object} ProseMirror document structure
+ * @param {Array} tokens - Array of marked tokens
+ * @param {Object} schema - ProseMirror schema
+ * @returns {Object} ProseMirror document
  */
-function parseMarkdown(markdown) {
-  // Get schema to validate against
-  const schema = getBaseSchema();
+function parseMarkdownContent(tokens, schema) {
+  const content = [];
+  let skipNext = false;
 
-  // Parse markdown to tokens using marked
-  const tokens = marked.lexer(markdown);
+  for (let i = 0; i < tokens.length; i++) {
+    if (skipNext) {
+      skipNext = false;
+      continue;
+    }
 
-  // Convert tokens to ProseMirror structure
-  const doc = parseMarkdownContent(tokens, schema);
+    // Handle eyebrow pattern
+    if (isEyebrowPattern(tokens, i)) {
+      content.push(...parseEyebrowPattern(tokens, i, schema));
+      skipNext = true;
+      continue;
+    }
 
-  return doc;
+    const node = parseBlock(tokens[i], schema);
+    if (node) {
+      content.push(node);
+    }
+  }
+
+  // Filter out any remaining null nodes and empty paragraphs
+  return {
+    type: "doc",
+    content: content.filter((node) => {
+      if (!node) return false;
+      if (node.type === "paragraph" && isEmptyContent(node.content))
+        return false;
+      return true;
+    }),
+  };
 }
 
 module.exports = {
-  parseMarkdown,
+  parseMarkdownContent,
 };
