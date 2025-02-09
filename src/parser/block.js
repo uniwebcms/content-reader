@@ -5,6 +5,7 @@
 const { marked } = require("marked");
 const { parseInline } = require("./inline");
 const { parseList } = require("./lists");
+const { parseTable } = require("./tables");
 
 /**
  * Process code block info string (e.g., "javascript:example.js")
@@ -108,6 +109,10 @@ function parseBlock(token, schema) {
 
   if (token.type === "list") {
     return parseList(token, schema);
+  }
+
+  if (token.type === "table") {
+    return parseTable(token, schema);
   }
 
   // Handle unknown block types as null
