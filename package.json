@@ -1,0 +1,29 @@
+{
+  "name": "@uniwebcms/content-reader",
+  "version": "0.1.0",
+  "description": "Markdown to ProseMirror document structure converter",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test-report": "jest --json > test-results.json 2>&1"
+  },
+  "keywords": [
+    "markdown",
+    "prosemirror",
+    "tiptap",
+    "parser"
+  ],
+  "author": "UniWeb CMS",
+  "license": "MIT",
+  "dependencies": {
+    "marked": "^11.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true
+  }
+}
