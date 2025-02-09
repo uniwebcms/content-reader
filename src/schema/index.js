@@ -66,6 +66,19 @@ const baseNodes = {
     content: "paragraph block*",
     defining: true,
   },
+
+  // Code blocks
+  codeBlock: {
+    attrs: {
+      language: { default: null },
+      filename: { default: null },
+    },
+    content: "text*",
+    marks: "", // No marks (formatting) allowed inside code blocks
+    group: "block",
+    code: true,
+    defining: true,
+  },
 };
 
 const baseMarks = {
@@ -83,6 +96,11 @@ const baseMarks = {
       title: { default: null },
       variant: { default: "primary" },
     },
+  },
+  code: {
+    // For inline code
+    inclusive: true,
+    code: true,
   },
 };
 

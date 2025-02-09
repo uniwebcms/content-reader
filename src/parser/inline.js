@@ -3,73 +3,6 @@
  */
 
 /**
- * Parse inline text to handle formatting markers
- * @param {string} text - Text content that might contain formatting markers
- * @param {Object} schema - ProseMirror schema
- * @returns {Array} Array of text nodes with marks
- */
-function parseFormattedText(text, schema) {
-  // Handle bold
-  const boldMatch = text.match(/\*\*(.+?)\*\*/);
-  if (boldMatch) {
-    const [fullMatch, content] = boldMatch;
-    const parts = text.split(fullMatch);
-    return [
-      ...parseInline({ type: "text", text: parts[0] }, schema),
-      {
-        type: "text",
-        marks: [{ type: "bold" }],
-        text: content,
-      },
-      ...parseInline({ type: "text", text: parts[1] }, schema),
-    ].filter((part) => part.text !== "");
-  }
-
-  // Handle italic
-  const italicMatch = text.match(/\*(.+?)\*/);
-  if (italicMatch) {
-    const [fullMatch, content] = italicMatch;
-    const parts = text.split(fullMatch);
-    return [
-      ...parseInline({ type: "text", text: parts[0] }, schema),
-      {
-        type: "text",
-        marks: [{ type: "italic" }],
-        text: content,
-      },
-      ...parseInline({ type: "text", text: parts[1] }, schema),
-    ].filter((part) => part.text !== "");
-  }
-
-  // Handle links
-  const linkMatch = text.match(/\[(.+?)\]\((.+?)\)/);
-  if (linkMatch) {
-    const [fullMatch, content, href] = linkMatch;
-    const parts = text.split(fullMatch);
-    return [
-      ...parseInline({ type: "text", text: parts[0] }, schema),
-      {
-        type: "text",
-        marks: [
-          {
-            type: "link",
-            attrs: {
-              href,
-              title: null,
-            },
-          },
-        ],
-        text: content,
-      },
-      ...parseInline({ type: "text", text: parts[1] }, schema),
-    ].filter((part) => part.text !== "");
-  }
-
-  // Only return non-empty text nodes
-  return text ? [{ type: "text", text }] : [];
-}
-
-/**
  * Parse inline content (text, bold, italic, etc.)
  * @param {Object} token - Marked token for inline content
  * @param {Object} schema - ProseMirror schema
@@ -77,14 +10,6 @@ function parseFormattedText(text, schema) {
  */
 function parseInline(token, schema) {
   if (token.type === "text") {
-    // Look for formatting markers in text
-    if (
-      token.text.includes("**") ||
-      token.text.includes("*") ||
-      (token.text.includes("[") && token.text.includes("]("))
-    ) {
-      return parseFormattedText(token.text, schema);
-    }
     return token.text ? [{ type: "text", text: token.text }] : [];
   }
 
@@ -103,6 +28,16 @@ function parseInline(token, schema) {
       {
         type: "text",
         marks: [{ type: "italic" }],
+        text: token.text,
+      },
+    ];
+  }
+
+  if (token.type === "codespan") {
+    return [
+      {
+        type: "text",
+        marks: [{ type: "code" }],
         text: token.text,
       },
     ];
