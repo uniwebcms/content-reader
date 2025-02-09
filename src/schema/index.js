@@ -79,6 +79,29 @@ const baseNodes = {
     code: true,
     defining: true,
   },
+
+  // Table nodes
+  table: {
+    content: "tableRow+",
+    group: "block",
+    tableRole: "table",
+  },
+
+  tableRow: {
+    content: "tableCell+",
+    tableRole: "row",
+  },
+
+  tableCell: {
+    content: "paragraph+",
+    attrs: {
+      colspan: { default: 1 },
+      rowspan: { default: 1 },
+      align: { default: null }, // left, center, right
+      header: { default: false },
+    },
+    tableRole: "cell",
+  },
 };
 
 const baseMarks = {
