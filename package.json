@@ -25,5 +25,16 @@
   "jest": {
     "testEnvironment": "node",
     "verbose": true
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniwebcms/content-reader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uniwebcms/content-reader/issues"
+  },
+  "homepage": "https://github.com/uniwebcms/content-reader#readme"
 }
