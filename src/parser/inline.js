@@ -68,15 +68,15 @@ function parseInline(token, schema) {
   if (token.type === "image") {
     const [role, src] = token.href.includes(":")
       ? token.href.split(":")
-      : ["content", token.href];
+      : ["image", token.href];
 
     return [
       {
         type: "image",
         attrs: {
           src,
-          alt: token.text || null,
-          title: token.title || null,
+          title: token.text || null,
+          alt: token.title || null,
           role,
         },
       },

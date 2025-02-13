@@ -95,7 +95,7 @@ describe("Basic Markdown Parsing", () => {
 
 describe("Extended Syntax", () => {
   test("parses images with roles", () => {
-    const markdown = '![Alt text](icon:path/to/image.svg "Title")';
+    const markdown = '![Title](icon:path/to/image.svg "Alt text")';
     const result = markdownToProseMirror(markdown);
 
     expect(result).toEqual({
@@ -108,8 +108,8 @@ describe("Extended Syntax", () => {
               type: "image",
               attrs: {
                 src: "path/to/image.svg",
-                alt: "Alt text",
                 title: "Title",
+                alt: "Alt text",
                 role: "icon",
               },
             },

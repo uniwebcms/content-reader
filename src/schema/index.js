@@ -33,8 +33,8 @@ const baseNodes = {
   image: {
     attrs: {
       src: {},
-      alt: { default: null },
       title: { default: null },
+      alt: { default: null },
       role: { default: "content" },
     },
     group: "block inline",
