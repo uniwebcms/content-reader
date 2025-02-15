@@ -2,7 +2,7 @@ const { markdownToProseMirror } = require("../src");
 
 describe("Basic Markdown Parsing", () => {
   test("parses simple paragraph", () => {
-    const markdown = "Hello World";
+    const markdown = "Hello World. It's a good day!";
     const result = markdownToProseMirror(markdown);
 
     expect(result).toEqual({
@@ -13,7 +13,7 @@ describe("Basic Markdown Parsing", () => {
           content: [
             {
               type: "text",
-              text: "Hello World",
+              text: "Hello World. It's a good day!",
             },
           ],
         },

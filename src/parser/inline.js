@@ -10,7 +10,8 @@
  */
 function parseInline(token, schema) {
   if (token.type === "text") {
-    return token.text ? [{ type: "text", text: token.text }] : [];
+    // Return the plan text version (the .text excludes special characters)
+    return token.text ? [{ type: "text", text: token.raw }] : [];
   }
 
   if (token.type === "strong") {
