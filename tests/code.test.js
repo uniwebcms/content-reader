@@ -1,8 +1,8 @@
 const { markdownToProseMirror } = require("../src");
 
 describe("Code Parsing", () => {
-  test("parses fenced code blocks", () => {
-    const markdown = "```javascript\nconst x = 1;\nconsole.log(x);\n```";
+  test("parses fenced code blocks and single quotes", () => {
+    const markdown = "```javascript\nconst x = 1;\nconsole.log('x:', x);\n```";
     const result = markdownToProseMirror(markdown);
 
     expect(result).toEqual({
@@ -17,7 +17,7 @@ describe("Code Parsing", () => {
           content: [
             {
               type: "text",
-              text: "const x = 1;\nconsole.log(x);",
+              text: "const x = 1;\nconsole.log('x:', x);",
             },
           ],
         },
@@ -74,7 +74,7 @@ describe("Code Parsing", () => {
   });
 
   test("parses inline code", () => {
-    const markdown = "Use the `console.log()` function.";
+    const markdown = "Use the `console.log('test')` function.";
     const result = markdownToProseMirror(markdown);
 
     expect(result).toEqual({
@@ -86,7 +86,7 @@ describe("Code Parsing", () => {
             { type: "text", text: "Use the " },
             {
               type: "text",
-              text: "console.log()",
+              text: "console.log('test')",
               marks: [{ type: "code" }],
             },
             { type: "text", text: " function." },

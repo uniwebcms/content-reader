@@ -1,8 +1,8 @@
 const { markdownToProseMirror } = require("../src");
 
 describe("Basic Markdown Parsing", () => {
-  test("parses simple paragraph", () => {
-    const markdown = "Hello World. It's a good day!";
+  test("handles plain text with special characters", () => {
+    const markdown = `text with 'single', "double", & specials – — © ® ™`;
     const result = markdownToProseMirror(markdown);
 
     expect(result).toEqual({
@@ -13,7 +13,35 @@ describe("Basic Markdown Parsing", () => {
           content: [
             {
               type: "text",
-              text: "Hello World. It's a good day!",
+              text: `text with 'single', "double", & specials – — © ® ™`,
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("parses accidental HTML paragraph", () => {
+    const markdown = `Some <tag looking> text`;
+    const result = markdownToProseMirror(markdown);
+
+    expect(result).toEqual({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "Some ",
+            },
+            {
+              type: "text",
+              text: "<tag looking>",
+            },
+            {
+              type: "text",
+              text: " text",
             },
           ],
         },
@@ -36,6 +64,62 @@ describe("Basic Markdown Parsing", () => {
             { type: "text", text: " and " },
             { type: "text", text: "italic", marks: [{ type: "italic" }] },
             { type: "text", text: " text" },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("handles nested formatting", () => {
+    const markdown = `**_bold italic_** text with **bold *then italic*** and *italic **then bold***`;
+    const result = markdownToProseMirror(markdown);
+
+    expect(result).toEqual({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "bold italic",
+              marks: [{ type: "italic" }, { type: "bold" }],
+            },
+            { type: "text", text: " text with " },
+            { type: "text", text: "bold ", marks: [{ type: "bold" }] },
+            {
+              type: "text",
+              text: "then italic",
+              marks: [{ type: "italic" }, { type: "bold" }],
+            },
+            { type: "text", text: " and " },
+            { type: "text", text: "italic ", marks: [{ type: "italic" }] },
+            {
+              type: "text",
+              text: "then bold",
+              marks: [{ type: "bold" }, { type: "italic" }],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("triple nested formatting", () => {
+    const markdown = `***bold italic both***`;
+    const result = markdownToProseMirror(markdown);
+
+    expect(result).toEqual({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "bold italic both",
+              marks: [{ type: "bold" }, { type: "italic" }],
+            },
           ],
         },
       ],

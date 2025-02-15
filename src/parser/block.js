@@ -59,7 +59,7 @@ function parseParagraph(token, schema) {
  * @returns {Object|null} ProseMirror block node or null if empty
  */
 function parseBlock(token, schema) {
-  console.log("BLOCK TOKEN: ", token);
+  // console.log("BLOCK TOKEN: ", token);
   // Skip HTML comments
   if (token.type === "html" && token.text.startsWith("<!--")) {
     return null;
