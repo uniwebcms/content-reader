@@ -44,9 +44,12 @@ function cleanCodeText(text) {
  * @returns {Array} Array of ProseMirror inline nodes
  */
 function parseParagraph(token, schema) {
-  // Use marked's inline lexer to properly handle inline code
-  const inlineTokens = marked.Lexer.lexInline(token.text || token.raw);
-  return inlineTokens.flatMap((t) => parseInline(t, schema));
+  // // Use marked's inline lexer to properly handle inline code
+  // const inlineTokens = marked.Lexer.lexInline(token.text || token.raw);
+  // return inlineTokens.flatMap((t) => parseInline(t, schema));
+
+  // Use the pre-parsed tokens instead of re-lexing
+  return token.tokens.flatMap((t) => parseInline(t, schema));
 }
 
 /**
@@ -56,6 +59,7 @@ function parseParagraph(token, schema) {
  * @returns {Object|null} ProseMirror block node or null if empty
  */
 function parseBlock(token, schema) {
+  console.log("BLOCK TOKEN: ", token);
   // Skip HTML comments
   if (token.type === "html" && token.text.startsWith("<!--")) {
     return null;

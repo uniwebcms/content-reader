@@ -14,7 +14,7 @@
     "tiptap",
     "parser"
   ],
-  "author": "UniWeb CMS",
+  "author": "Proximify Inc.",
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "marked": "^11.1.0"

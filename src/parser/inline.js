@@ -11,35 +11,38 @@
 function parseInline(token, schema) {
   if (token.type === "text") {
     // Return the plan text version (the .text excludes special characters)
-    return token.text ? [{ type: "text", text: token.raw }] : [];
+    return token.raw ? [{ type: "text", text: token.raw }] : [];
   }
 
-  if (token.type === "strong") {
-    return [
-      {
-        type: "text",
-        marks: [{ type: "bold" }],
-        text: token.text,
-      },
-    ];
+  if (token.type === "strong" || token.type === "em") {
+    const mark = { type: token.type === "strong" ? "bold" : "italic" };
+
+    return token.tokens.flatMap((t) =>
+      parseInline(t, schema).map((node) => ({
+        ...node,
+        marks: [...(node.marks || []), mark],
+      }))
+    );
   }
 
-  if (token.type === "em") {
-    return [
-      {
-        type: "text",
-        marks: [{ type: "italic" }],
-        text: token.text,
-      },
-    ];
+  if (token.type === "html") {
+    // Handle HTML tokens however you need
+    // You might want to strip the < > or process them differently
+    return [{ type: "text", text: token.raw }];
   }
+
+  // Decode HTML entities
+  const text = token.text
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&");
 
   if (token.type === "codespan") {
     return [
       {
         type: "text",
         marks: [{ type: "code" }],
-        text: token.text,
+        text,
       },
     ];
   }
@@ -61,7 +64,7 @@ function parseInline(token, schema) {
             },
           },
         ],
-        text: token.text,
+        text,
       },
     ];
   }
@@ -76,16 +79,12 @@ function parseInline(token, schema) {
         type: "image",
         attrs: {
           src,
-          title: token.text || null,
+          title: text || null,
           alt: token.title || null,
           role,
         },
       },
     ];
-  }
-
-  if (token.type === "html") {
-    return [];
   }
 
   // Handle unknown token types as plain text
