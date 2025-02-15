@@ -3,18 +3,28 @@
  */
 
 /**
- * Parse inline content (text, bold, italic, etc.)
+ * Parse inline markdown content into ProseMirror/Tiptap nodes
  * @param {Object} token - Marked token for inline content
  * @param {Object} schema - ProseMirror schema
  * @returns {Array} Array of ProseMirror inline nodes
+ *
+ * Notes on implementation choices:
+ * - We use token.raw for plain text to avoid HTML entity encoding
+ * - For formatted text (bold/italic), we use token.tokens to handle nested formatting
+ * - Tiptap represents formatting as marks on text nodes, not nested structures
+ * - HTML entities are only decoded for specific token types (codespan, link) where
+ *   we need the processed content
  */
 function parseInline(token, schema) {
   if (token.type === "text") {
-    // Return the plan text version (the .text excludes special characters)
+    // Use raw to get unencoded characters (', ", &, etc.)
+    // marked's .text property encodes these as HTML entities
     return token.raw ? [{ type: "text", text: token.raw }] : [];
   }
 
   if (token.type === "strong" || token.type === "em") {
+    // Tiptap represents formatting as marks on text nodes
+    // For nested formatting like **_text_**, all marks are applied to the same text node
     const mark = { type: token.type === "strong" ? "bold" : "italic" };
 
     return token.tokens.flatMap((t) =>
