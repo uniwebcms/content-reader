@@ -178,6 +178,31 @@ describe("Basic Markdown Parsing", () => {
 });
 
 describe("Extended Syntax", () => {
+  test("parses images without role", () => {
+    const markdown = "![Title](path/to/image.svg)";
+    const result = markdownToProseMirror(markdown);
+
+    expect(result).toEqual({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "image",
+              attrs: {
+                src: "path/to/image.svg",
+                title: "Title",
+                alt: null,
+                role: "image",
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
   test("parses images with roles", () => {
     const markdown = '![Title](icon:path/to/image.svg "Alt text")';
     const result = markdownToProseMirror(markdown);
@@ -195,6 +220,31 @@ describe("Extended Syntax", () => {
                 title: "Title",
                 alt: "Alt text",
                 role: "icon",
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("parses images without URL", () => {
+    const markdown = "![Title](https://test.com)";
+    const result = markdownToProseMirror(markdown);
+
+    expect(result).toEqual({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "image",
+              attrs: {
+                src: "https://test.com",
+                title: "Title",
+                alt: null,
+                role: "image",
               },
             },
           ],

@@ -80,9 +80,17 @@ function parseInline(token, schema) {
   }
 
   if (token.type === "image") {
-    const [role, src] = token.href.includes(":")
-      ? token.href.split(":")
-      : ["image", token.href];
+    let role, src;
+
+    // Find the first colon to handle role:url format correctly
+    if (token.href.includes(":") && !token.href.startsWith("http")) {
+      const colonIndex = token.href.indexOf(":");
+      role = token.href.substring(0, colonIndex);
+      src = token.href.substring(colonIndex + 1);
+    } else {
+      role = "image";
+      src = token.href;
+    }
 
     return [
       {
