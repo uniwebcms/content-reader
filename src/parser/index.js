@@ -13,40 +13,44 @@ const { isEmptyContent } = require("./utils");
  * @returns {Object} ProseMirror document
  */
 function parseMarkdownContent(tokens, schema) {
-  const content = [];
-  let skipNext = false;
+    const content = [];
+    let skipNext = false;
 
-  for (let i = 0; i < tokens.length; i++) {
-    if (skipNext) {
-      skipNext = false;
-      continue;
+    for (let i = 0; i < tokens.length; i++) {
+        if (skipNext) {
+            skipNext = false;
+            continue;
+        }
+
+        // Handle eyebrow pattern
+        // if (isEyebrowPattern(tokens, i)) {
+        //   content.push(...parseEyebrowPattern(tokens, i, schema));
+        //   skipNext = true;
+        //   continue;
+        // }
+
+        const node = parseBlock(tokens[i], schema);
+        if (node) {
+            if (Array.isArray(node)) {
+                content.push(...node);
+            } else {
+                content.push(node);
+            }
+        }
     }
 
-    // Handle eyebrow pattern
-    // if (isEyebrowPattern(tokens, i)) {
-    //   content.push(...parseEyebrowPattern(tokens, i, schema));
-    //   skipNext = true;
-    //   continue;
-    // }
-
-    const node = parseBlock(tokens[i], schema);
-    if (node) {
-      content.push(node);
-    }
-  }
-
-  // Filter out any remaining null nodes and empty paragraphs
-  return {
-    type: "doc",
-    content: content.filter((node) => {
-      if (!node) return false;
-      if (node.type === "paragraph" && isEmptyContent(node.content))
-        return false;
-      return true;
-    }),
-  };
+    // Filter out any remaining null nodes and empty paragraphs
+    return {
+        type: "doc",
+        content: content.filter((node) => {
+            if (!node) return false;
+            if (node.type === "paragraph" && isEmptyContent(node.content))
+                return false;
+            return true;
+        }),
+    };
 }
 
 module.exports = {
-  parseMarkdownContent,
+    parseMarkdownContent,
 };

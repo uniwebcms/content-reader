@@ -6,6 +6,7 @@
 const { marked } = require("marked");
 const { parseMarkdownContent } = require("./parser");
 const { getBaseSchema } = require("./schema");
+const { isValidUniwebMarkdown } = require("./utils");
 
 /**
  * Convert markdown content to ProseMirror document structure
@@ -13,11 +14,12 @@ const { getBaseSchema } = require("./schema");
  * @returns {Object} ProseMirror document structure
  */
 function markdownToProseMirror(markdown) {
-  const schema = getBaseSchema();
-  const tokens = marked.lexer(markdown);
-  return parseMarkdownContent(tokens, schema);
+    const schema = getBaseSchema();
+    const tokens = marked.lexer(markdown);
+    return parseMarkdownContent(tokens, schema);
 }
 
 module.exports = {
-  markdownToProseMirror,
+    markdownToProseMirror,
+    isValidUniwebMarkdown,
 };

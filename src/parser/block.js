@@ -13,13 +13,13 @@ const { parseTable } = require("./tables");
  * @returns {Object} Language and filename
  */
 function processCodeInfo(info) {
-  if (!info) return { language: null, filename: null };
+    if (!info) return { language: null, filename: null };
 
-  const parts = info.split(":");
-  return {
-    language: parts[0] || null,
-    filename: parts[1] || null,
-  };
+    const parts = info.split(":");
+    return {
+        language: parts[0] || null,
+        filename: parts[1] || null,
+    };
 }
 
 /**
@@ -28,13 +28,15 @@ function processCodeInfo(info) {
  * @returns {string} Cleaned text
  */
 function cleanCodeText(text) {
-  // Remove common indent (for indented code blocks)
-  const lines = text.split("\n");
-  const indent = lines[0].match(/^\s*/)[0];
-  return lines
-    .map((line) => (line.startsWith(indent) ? line.slice(indent.length) : line))
-    .join("\n")
-    .trim();
+    // Remove common indent (for indented code blocks)
+    const lines = text.split("\n");
+    const indent = lines[0].match(/^\s*/)[0];
+    return lines
+        .map((line) =>
+            line.startsWith(indent) ? line.slice(indent.length) : line
+        )
+        .join("\n")
+        .trim();
 }
 
 /**
@@ -44,12 +46,12 @@ function cleanCodeText(text) {
  * @returns {Array} Array of ProseMirror inline nodes
  */
 function parseParagraph(token, schema) {
-  // // Use marked's inline lexer to properly handle inline code
-  // const inlineTokens = marked.Lexer.lexInline(token.text || token.raw);
-  // return inlineTokens.flatMap((t) => parseInline(t, schema));
+    // // Use marked's inline lexer to properly handle inline code
+    // const inlineTokens = marked.Lexer.lexInline(token.text || token.raw);
+    // return inlineTokens.flatMap((t) => parseInline(t, schema));
 
-  // Use the pre-parsed tokens instead of re-lexing
-  return token.tokens.flatMap((t) => parseInline(t, schema));
+    // Use the pre-parsed tokens instead of re-lexing
+    return token.tokens.flatMap((t) => parseInline(t, schema));
 }
 
 /**
@@ -59,71 +61,105 @@ function parseParagraph(token, schema) {
  * @returns {Object|null} ProseMirror block node or null if empty
  */
 function parseBlock(token, schema) {
-  // console.log("BLOCK TOKEN: ", token);
-  // Skip HTML comments
-  if (token.type === "html" && token.text.startsWith("<!--")) {
-    return null;
-  }
-
-  if (token.type === "paragraph") {
-    const content = parseParagraph(token, schema);
-    if (!content.length) {
-      return null;
+    // console.log("BLOCK TOKEN: ", token);
+    // Skip HTML comments
+    if (token.type === "html" && token.text.startsWith("<!--")) {
+        return null;
     }
 
-    return {
-      type: "paragraph",
-      content,
-    };
-  }
+    if (token.type === "paragraph") {
+        const content = parseParagraph(token, schema);
 
-  if (token.type === "heading") {
-    const headingContent = parseParagraph(token, schema);
+        if (!content.length) {
+            return null;
+        }
 
-    return {
-      type: "heading",
-      attrs: {
-        level: token.depth,
-        id: null,
-      },
-      content: headingContent,
-    };
-  }
+        // extract images to the root level
+        const result = [];
+        let currentParagraph = null;
 
-  if (token.type === "hr") {
-    return {
-      type: "divider",
-      attrs: { style: "line", size: "normal" },
-    };
-  }
+        content.forEach((element) => {
+            if (element.type === "image") {
+                // If there's an open paragraph, push it to the result before the image
+                if (currentParagraph) {
+                    result.push({
+                        type: "paragraph",
+                        content: currentParagraph,
+                    });
+                    currentParagraph = null; // Reset the current paragraph
+                }
+                // Push the image directly to the result
+                result.push(element);
+            } else {
+                // Start a new paragraph if there isn't one open
+                if (!currentParagraph) {
+                    currentParagraph = [];
+                }
+                // Add the non-image element to the current paragraph
+                currentParagraph.push(element);
+            }
+        });
 
-  if (token.type === "code") {
-    const { language, filename } = processCodeInfo(token.lang);
-    return {
-      type: "codeBlock",
-      attrs: { language, filename },
-      content: [
-        {
-          type: "text",
-          text: cleanCodeText(token.text),
-        },
-      ],
-    };
-  }
+        // If there's an open paragraph after the last element, push it to the result
+        if (currentParagraph) {
+            result.push({ type: "paragraph", content: currentParagraph });
+        }
 
-  if (token.type === "list") {
-    return parseList(token, schema);
-  }
+        return result;
 
-  if (token.type === "table") {
-    return parseTable(token, schema);
-  }
+        // return {
+        //     type: "paragraph",
+        //     content,
+        // };
+    }
 
-  // Handle unknown block types as null
-  return null;
+    if (token.type === "heading") {
+        const headingContent = parseParagraph(token, schema);
+
+        return {
+            type: "heading",
+            attrs: {
+                level: token.depth,
+                id: null,
+            },
+            content: headingContent,
+        };
+    }
+
+    if (token.type === "hr") {
+        return {
+            type: "divider",
+            attrs: { style: "line", size: "normal" },
+        };
+    }
+
+    if (token.type === "code") {
+        const { language, filename } = processCodeInfo(token.lang);
+        return {
+            type: "codeBlock",
+            attrs: { language, filename },
+            content: [
+                {
+                    type: "text",
+                    text: cleanCodeText(token.text),
+                },
+            ],
+        };
+    }
+
+    if (token.type === "list") {
+        return parseList(token, schema);
+    }
+
+    if (token.type === "table") {
+        return parseTable(token, schema);
+    }
+
+    // Handle unknown block types as null
+    return null;
 }
 
 module.exports = {
-  parseBlock,
-  parseParagraph,
+    parseBlock,
+    parseParagraph,
 };
