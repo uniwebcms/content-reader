@@ -126,6 +126,14 @@ function parseBlock(token, schema) {
         };
     }
 
+    if (token.type === "blockquote") {
+        const content = token.tokens.flatMap((t) => parseBlock(t, schema));
+        return {
+            type: "blockquote",
+            content,
+        };
+    }
+
     if (token.type === "hr") {
         return {
             type: "divider",

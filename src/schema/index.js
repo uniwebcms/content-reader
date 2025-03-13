@@ -79,7 +79,10 @@ const baseNodes = {
         code: true,
         defining: true,
     },
-
+    blockquote: {
+        content: "inline*",
+        group: "block",
+    },
     // Table nodes
     table: {
         content: "tableRow+",
