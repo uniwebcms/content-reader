@@ -137,7 +137,7 @@ function parseBlock(token, schema) {
     if (token.type === "hr") {
         return {
             type: "divider",
-            attrs: { style: "line", size: "normal" },
+            attrs: { style: "dot", size: "normal" },
         };
     }
 

@@ -15,7 +15,7 @@ const { isEmptyContent } = require("./utils");
 function parseMarkdownContent(tokens, schema) {
     const content = [];
     let skipNext = false;
-    console.log("tokens:", tokens);
+    // console.log("tokens:", tokens);
     for (let i = 0; i < tokens.length; i++) {
         if (skipNext) {
             skipNext = false;

@@ -17,7 +17,7 @@
  */
 function parseInline(token, schema, removeNewLine = false) {
     if (token.type === "text") {
-        if (removeNewLine) {
+        if (removeNewLine && token.raw) {
             token.raw = token.raw.replace(/\n/g, "");
         }
         // Use raw to get unencoded characters (', ", &, etc.)
@@ -42,6 +42,8 @@ function parseInline(token, schema, removeNewLine = false) {
         // Handle HTML tokens however you need
         // You might want to strip the < > or process them differently
         return [{ type: "text", text: token.raw }];
+    } else if (token.type === "br") {
+        return [{ type: "text", text: "\n" }];
     }
 
     // Decode HTML entities
